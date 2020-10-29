@@ -682,8 +682,8 @@ nfs4_op_setclientid(struct nfs_context *nfs, nfs_argop4 *op, verifier4 verifier,
          *   the originating address and program anyway. )
          */
         scidargs->callback.cb_program = 0; /* NFS4_CALLBACK */
-        scidargs->callback.cb_location.r_netid = "tcp";
-        scidargs->callback.cb_location.r_addr = "0.0.0.0.0.0";
+        scidargs->callback.cb_location.na_r_netid = "tcp";
+        scidargs->callback.cb_location.na_r_addr = "0.0.0.0.0.0";
         scidargs->callback_ident = 0x00000001;
 
         return 1;
