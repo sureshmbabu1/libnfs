@@ -277,6 +277,14 @@ EXTERN void nfs_set_autoreconnect(struct nfs_context *nfs, int num_retries);
 EXTERN int nfs_set_version(struct nfs_context *nfs, int version);
 
 /*
+ * Set NFS v4 minor version. Supported versions are
+ * 0
+ * 1
+ */
+EXTERN int nfs_set_minor_version(struct nfs_context *nfs, int version);
+
+
+/*
  *  Invalidate the pagecache
  */
 EXTERN void nfs_pagecache_invalidate(struct nfs_context *nfs,
