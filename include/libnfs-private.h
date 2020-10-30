@@ -292,6 +292,7 @@ struct nfs_context {
        struct nested_mounts *nested_mounts;
 
         int version;
+        int minorversion;
         int nfsport;
         int mountport;
 
@@ -299,6 +300,7 @@ struct nfs_context {
         verifier4 verifier;
         char *client_name;
         uint64_t clientid;
+        sessionid4 sessionid;
         verifier4 setclientid_confirm;
         uint32_t seqid;
         int has_lock_owner;
@@ -484,7 +486,6 @@ int nfs3_utimes_async_internal(struct nfs_context *nfs, const char *path,
 int nfs3_write_async(struct nfs_context *nfs, struct nfsfh *nfsfh,
                      uint64_t count, const void *buf, nfs_cb cb,
                      void *private_data);
-   
 int nfs4_access_async(struct nfs_context *nfs, const char *path, int mode,
                       nfs_cb cb, void *private_data);
 int nfs4_access2_async(struct nfs_context *nfs, const char *path, nfs_cb cb,
