@@ -25,6 +25,7 @@
 
 #include <stdint.h>
 #include <nfsc/libnfs-zdr.h>
+#include <nfs4/libnfs-raw-nfs4.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -34,6 +35,8 @@ struct rpc_data {
        int size;
        char *data;
 };
+
+typedef char sessionid4[NFS4_SESSIONID_SIZE];
 
 struct rpc_context;
 EXTERN struct rpc_context *rpc_init_context(void);
@@ -2269,7 +2272,9 @@ EXTERN int rpc_nfs4_null_async(struct rpc_context *rpc, rpc_cb cb,
 struct COMPOUND4args;
 EXTERN int rpc_nfs4_compound_async(struct rpc_context *rpc, rpc_cb cb,
                                    struct COMPOUND4args *args,
-                                   void *private_data);
+                                   void *private_data,
+                                   sessionid4 sessionid,
+                                   uint32_t* seqid);
 /*
  * Call NFS4/COMPOUND with extra allocation.
 
@@ -2291,7 +2296,9 @@ struct COMPOUND4args;
 EXTERN int rpc_nfs4_compound_async2(struct rpc_context *rpc, rpc_cb cb,
                                    struct COMPOUND4args *args,
                                    void *private_data,
-                                   size_t alloc_hint);
+                                   size_t alloc_hint,
+                                   sessionid4 sessionid,
+                                   uint32_t* seqid);
 
 /*
  * Call <generic>/NULL

@@ -205,9 +205,14 @@ int
 rpc_nfs4_compound_async2(struct rpc_context *rpc, rpc_cb cb,
                         struct COMPOUND4args *args,
                         void *private_data,
-                        size_t alloc_hint)
+                        size_t alloc_hint,
+                        sessionid4 sessionid,
+                        uint32_t* seqid)
 {
 	struct rpc_pdu *pdu;
+  int i = 0;
+  nfs_argop4 *op = NULL;
+  SEQUENCE4args *seqargs;
 
 	pdu = rpc_allocate_pdu2(rpc, NFS4_PROGRAM, NFS_V4, NFSPROC4_COMPOUND,
                                cb, private_data, (zdrproc_t)zdr_COMPOUND4res,
@@ -219,26 +224,62 @@ rpc_nfs4_compound_async2(struct rpc_context *rpc, rpc_cb cb,
 		return -1;
 	}
 
-	if (zdr_COMPOUND4args(&pdu->zdr,  args) == 0) {
-		rpc_set_error(rpc, "ZDR error: Failed to encode COMPOUND4args");
-		rpc_free_pdu(rpc, pdu);
-		return -2;
-	}
+  if (args->minorversion == 1 &&
+      args->argarray.argarray_val[0].argop != OP_CREATE_SESSION &&
+      args->argarray.argarray_val[0].argop != OP_EXCHANGE_ID) {
+    int len = args->argarray.argarray_len;
 
-	if (rpc_queue_pdu(rpc, pdu) != 0) {
-		rpc_set_error(rpc, "Out of memory. Failed to queue pdu for "
-                              "NFS4/COMPOUND4 call");
-		return -3;
-	}
+    op = malloc(sizeof(nfs_argop4) * (len + 1));
+    memset(op, 0, sizeof(nfs_argop4) * (len + 1));
+    for (i = 0; i < len; i++) {
+      op[i + 1] = args->argarray.argarray_val[i];
+    }
+    op[0].argop = OP_SEQUENCE;
 
-	return 0;
+    seqargs = &op[0].nfs_argop4_u.opsequence;
+    memset(seqargs, 0, sizeof(SEQUENCE4args));
+    memcpy(seqargs->sa_sessionid, sessionid, sizeof(sessionid4));
+    seqargs->sa_sequenceid = (*seqid)++;
+    args->argarray.argarray_len = len + 1;
+    args->argarray.argarray_val = op;
+  }
+
+  free(op);
+
+  pdu = rpc_allocate_pdu(rpc, NFS4_PROGRAM, NFS_V4, NFSPROC4_COMPOUND, cb,
+                         private_data, (zdrproc_t)zdr_COMPOUND4res,
+                         sizeof(COMPOUND4res));
+  if (pdu == NULL) {
+    rpc_set_error(rpc,
+                  "Out of memory. Failed to allocate pdu for "
+                  "NFS4/COMPOUND call");
+    return -1;
+  }
+
+  if (zdr_COMPOUND4args(&pdu->zdr, args) == 0) {
+    rpc_set_error(rpc, "ZDR error: Failed to encode COMPOUND4args");
+    rpc_free_pdu(rpc, pdu);
+    return -2;
+  }
+
+  if (rpc_queue_pdu(rpc, pdu) != 0) {
+    rpc_set_error(rpc,
+                  "Out of memory. Failed to queue pdu for "
+                  "NFS4/COMPOUND4 call");
+    return -3;
+  }
+
+  return 0;
 }
 
 
 int
 rpc_nfs4_compound_async(struct rpc_context *rpc, rpc_cb cb,
                         struct COMPOUND4args *args,
-                        void *private_data)
+                        void *private_data,
+                        sessionid4 sessionid,
+                        uint32_t* seqid)
 {
-        return rpc_nfs4_compound_async2(rpc, cb, args, private_data, 0);
+  return rpc_nfs4_compound_async2(rpc, cb, args, private_data, 0, sessionid,
+                                  seqid);
 }
