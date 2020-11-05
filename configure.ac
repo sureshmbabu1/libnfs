@@ -245,7 +245,6 @@ AC_HEADER_MAJOR
 #output
 AC_CONFIG_FILES([Makefile]
                 [doc/Makefile]
-                [examples/Makefile]
                 [include/Makefile]
                 [lib/Makefile]
                 [mount/Makefile]
@@ -255,8 +254,6 @@ AC_CONFIG_FILES([Makefile]
                 [nsm/Makefile]
                 [portmap/Makefile]
                 [rquota/Makefile]
-                [tests/Makefile]
-                [utils/Makefile]
                )
 
 AC_OUTPUT([libnfs.pc])
