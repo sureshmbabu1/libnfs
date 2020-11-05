@@ -7,8 +7,7 @@ rquota_GENERATED = $(rquota_SOURCES_GENERATED) $(rquota_HEADERS_GENERATED)
 CLEANFILES = $(rquota_GENERATED) rquota-stamp
 
 librquota_la_CPPFLAGS = -I$(abs_top_srcdir)/include \
-			-I$(abs_top_srcdir)/include/nfsc \
-			-I$(abs_top_srcdir)/win32
+			-I$(abs_top_srcdir)/include/nfsc
 librquota_la_SOURCES = \
 	$(rquota_SOURCES_GENERATED) \
 	rquota.c libnfs-raw-rquota.c libnfs-raw-rquota.h

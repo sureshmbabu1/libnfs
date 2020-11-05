@@ -7,8 +7,7 @@ nlm_GENERATED = $(nlm_SOURCES_GENERATED) $(nlm_HEADERS_GENERATED)
 CLEANFILES = $(nlm_GENERATED) nlm-stamp
 
 libnlm_la_CPPFLAGS = -I$(abs_top_srcdir)/include \
-		     -I$(abs_top_srcdir)/include/nfsc \
-		     -I$(abs_top_srcdir)/win32
+		     -I$(abs_top_srcdir)/include/nfsc
 libnlm_la_SOURCES = \
 	$(nlm_SOURCES_GENERATED) \
 	nlm.c libnfs-raw-nlm.c libnfs-raw-nlm.h
